@@ -56,7 +56,7 @@ function TopBarTest(props) {
   };
 
   return (
-    <nav style={{ display: 'flex', alignItems: 'center' }}>
+    <nav style={{ display: 'flex', alignItems: 'center', minWidth: '1260px' }}>
       <div className="topbar">
         <div
           className="topbar__searchbar"
@@ -106,12 +106,26 @@ function TopBarTest(props) {
           </div>
           <ul className="topbar__results" id="results" ref={searchResoult} />
         </div>
-        <Link to="/addNew">
-          <div className="topbar__add">
-            <AddCircleIcon />
-            <h3>{'Add New'}</h3>
-          </div>
-        </Link>
+        <div className="addList">
+          <Link to="/addMember">
+            <div className="topbar__add">
+              <AddCircleIcon />
+              <h3>Add Member</h3>
+            </div>
+          </Link>
+          <Link to="/addDepartment">
+            <div className="topbar__add">
+              <AddCircleIcon />
+              <h3>Add Department</h3>
+            </div>
+          </Link>
+          <Link to="/addPosition">
+            <div className="topbar__add">
+              <AddCircleIcon />
+              <h3>Add Position</h3>
+            </div>
+          </Link>
+        </div>
       </div>
     </nav>
   );

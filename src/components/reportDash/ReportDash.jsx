@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LeftBar from '../parts/LeftBar';
 import TopBar from '../parts/TopBar';
 import Chart from '../parts/chart';
@@ -27,6 +27,33 @@ const fakeHiringData = [
 ];
 
 function ReportDash(props) {
+  const [departmentInfo, setDepartmentInfo] = useState([]);
+  const [em_total, setEm_total] = useState(0);
+  const [notify_1, setNotify_1] = useState([]);
+  const [notify_2, setNotify_2] = useState([]);
+  const [notify_3, setNotify_3] = useState([]);
+  useEffect(() => {
+    fetch('http://localhost:3000/api/allDepartmentNumInfo')
+      .then((res) => res.json())
+      .then((response) => {
+        setDepartmentInfo(response.info);
+        setEm_total(response.totalNum);
+      })
+      .catch((error) => console.log(error.message));
+    fetch('http://localhost:3000/api/getNotification')
+      .then((res) => res.json())
+      .then((response) => {
+        const section_1 = response.info.splice(0, 3);
+        const section_2 = response.info.splice(0, 3);
+        const section_3 = response.info;
+        setNotify_1(section_1);
+        setNotify_2(section_2);
+        setNotify_3(section_3);
+        console.log(notify_1);
+      })
+      .catch((error) => console.log(error.message));
+  }, []);
+
   const getTotalNum = (arr) => {
     let resoult = 0;
     for (var i = 0; i < arr.length; i++) {
@@ -131,54 +158,36 @@ function ReportDash(props) {
                         <table className="panel__portfolio-list">
                           <tbody>
                             <tr>
-                              <th>SYMBOL</th>
-                              <th>QUANTITY</th>
-                              <th>GAIN/LOSS (%)</th>
-                              <th>CURRENT VALUE</th>
+                              <th style={{ fontSize: '15px' }}>Department</th>
+                              <th style={{ fontSize: '15px' }}>Members</th>
                             </tr>
-                            <tr>
-                              <td
-                                style={{
-                                  textAlign: 'center',
-                                  color: 'black',
-                                  fontSize: '16px',
-                                }}
-                              >
-                                hello
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: 'center',
-                                  color: 'black',
-                                  fontSize: '16px',
-                                }}
-                              >
-                                hello
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: 'center',
-                                  color: 'black',
-                                  fontSize: '16px',
-                                }}
-                              >
-                                efjiejfijfif
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: 'center',
-                                  color: 'black',
-                                  fontSize: '16px',
-                                }}
-                              >
-                                heijfisfj
-                              </td>
-                            </tr>
+                            {departmentInfo.map((dep) => (
+                              <tr>
+                                <td
+                                  style={{
+                                    textAlign: 'center',
+                                    color: 'black',
+                                    fontSize: '16px',
+                                  }}
+                                >
+                                  {dep[1]}
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: 'center',
+                                    color: 'black',
+                                    fontSize: '16px',
+                                  }}
+                                >
+                                  {dep[0]}
+                                </td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                         <div className="panel__value">
-                          <h5>NET WORTH</h5>
-                          <h5>jfiesjflajfljeja</h5>
+                          <h5>Total</h5>
+                          <h5>{em_total}</h5>
                         </div>
                       </div>
                     </div>
@@ -211,104 +220,41 @@ function ReportDash(props) {
               <div className="panel__bottom">
                 <div className="panel__notificationlist">
                   <ul className="panel__list">
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
+                    {notify_1.map((not) => (
+                      <li className="panel__listcontent">
+                        <span className="panel__fullname">
+                          <h4>Notification</h4>
+                          <h6 className="panel__name">{not.not_message}</h6>
+                        </span>
+                        <div className="panel__list-change"></div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="panel__notificationlist">
                   <ul className="panel__list">
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
+                    {notify_2.map((not) => (
+                      <li className="panel__listcontent">
+                        <span className="panel__fullname">
+                          <h4>Notification</h4>
+                          <h6 className="panel__name">{not.not_message}</h6>
+                        </span>
+                        <div className="panel__list-change"></div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="panel__notificationlist">
                   <ul className="panel__list">
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
-                    <li className="panel__listcontent">
-                      <span className="panel__fullname">
-                        <h4>Hanner Andrew</h4>
-                        <h6 className="panel__name">IT Department</h6>
-                      </span>
-                      <div className="panel__list-change">
-                        <h4>From Bill</h4>
-                        <h4>To IT</h4>
-                      </div>
-                    </li>
+                    {notify_3.map((not) => (
+                      <li className="panel__listcontent">
+                        <span className="panel__fullname">
+                          <h4>Notification</h4>
+                          <h6 className="panel__name">{not.not_message}</h6>
+                        </span>
+                        <div className="panel__list-change"></div>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>

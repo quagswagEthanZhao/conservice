@@ -75,7 +75,7 @@ function AddNew(props) {
                       className="register-form validate-form"
                     >
                       <span className="register-form-title">
-                        Add New Information
+                        Add New Member
                       </span>
                       <p style={{ fontSize: '15px' }}>{message}</p>
                       <div className="wrap-input">
