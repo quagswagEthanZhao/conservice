@@ -1,11 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TopBar from '../parts/TopBar';
 import LeftBar from '../parts/LeftBar';
 import test from '../../images/account3.png';
-
 function Edit(props) {
-  const [errorMessage, serErrorMessage] = useState('');
+  const [employee, setEmployee] = useState({});
+  const [manager, setManager] = useState({});
+  const [Message, setMessage] = useState('');
+  const [checkbox, setCheckBox] = useState(true);
+  const [checkResoult, setCheckResoult] = useState(null);
+  const checkBoxInfo = useRef();
   const id = props.location.pathname.split('/')[2];
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/getAll')
+      .then((res) => res.json())
+      .then((response) => {
+        const em_info = response.filter((m) => m.em_id == id)[0];
+        setEmployee(em_info);
+      })
+      .catch((error) => error.message);
+    fetch(`http://localhost:3000/api/getManagerId/${id}`)
+      .then((res) => res.json())
+      .then((response) => setManager(response))
+      .catch((error) => console.log(error.message));
+  }, []);
+
+  const handleCheckBox = () => {
+    checkbox ? setCheckBox(false) : setCheckBox(true);
+    const terminated = checkBoxInfo.current.checked;
+    setCheckResoult(terminated);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const {
+      name,
+      address,
+      email,
+      phoneNumber,
+      position,
+      department,
+      startingDate,
+      endDate,
+      shift,
+      manager,
+      favColor,
+    } = event.target;
+
+    fetch(`http://localhost:3000/api/updateInfo/${id}`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        name: name.value,
+        address: address.value,
+        email: email.value,
+        phoneNumber: phoneNumber.value,
+        position: position.value,
+        department: department.value,
+        startingDate: startingDate.value,
+        manager: manager.value,
+        endDate: endDate.value ? endDate.value : null,
+        shift: shift.value,
+
+        favColor: favColor.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        setMessage('Info Saved!');
+      });
+    fetch(`http://localhost:3000/api/terminate/${id}`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        terminate: checkResoult === null ? false : checkResoult,
+      }),
+    }).then(() => setMessage(`Info Saved !`));
+  };
+
   return (
     <section className="Dashboard" id="dashboard">
       <div
@@ -33,14 +111,18 @@ function Edit(props) {
                         alt="Login Img"
                       />
                     </div>
-                    <form className="register-form validate-form">
+                    <form
+                      action="put"
+                      onSubmit={(event) => handleSubmit(event)}
+                      className="register-form validate-form"
+                    >
                       <span className="register-form-title">
                         Edit Information
                       </span>
-                      {errorMessage === '' ? <div /> : <h3>{errorMessage}</h3>}
+                      <p style={{ fontSize: '15px' }}>{Message}</p>
                       <div className="wrap-input">
                         <input
-                          value="Ethan Zhao"
+                          defaultValue={employee.name}
                           className="input"
                           type="text"
                           name="name"
@@ -50,7 +132,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="313E 86868N LOGAN UT"
+                          defaultValue={employee.address}
                           className="input"
                           type="text"
                           name="address"
@@ -60,7 +142,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="ehisfsfj@gmail.com"
+                          defaultValue={employee.email}
                           className="input"
                           type="text"
                           name="email"
@@ -70,7 +152,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="163647484884"
+                          defaultValue={employee.phone}
                           className="input"
                           type="text"
                           name="phoneNumber"
@@ -80,7 +162,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="Manager"
+                          defaultValue={employee.job_title}
                           className="input"
                           type="text"
                           name="position"
@@ -90,7 +172,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="IT"
+                          defaultValue={employee.department_name}
                           className="input"
                           type="text"
                           name="department"
@@ -103,7 +185,7 @@ function Edit(props) {
                         data-validate="Password is required"
                       >
                         <input
-                          value="2021-5-10"
+                          defaultValue={employee.start_date}
                           className="input"
                           type="text"
                           name="startingDate"
@@ -116,7 +198,7 @@ function Edit(props) {
                         data-validate="Password is required"
                       >
                         <input
-                          value="N/A"
+                          defaultValue="N/A"
                           className="input"
                           type="text"
                           name="endDate"
@@ -126,7 +208,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="hired"
+                          defaultValue="hired"
                           className="input"
                           type="text"
                           name="employmentStatu"
@@ -136,7 +218,7 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="9:00 - 5:00"
+                          defaultValue={employee.shift}
                           className="input"
                           type="text"
                           name="shift"
@@ -146,16 +228,17 @@ function Edit(props) {
                       </div>
                       <div className="wrap-input">
                         <input
-                          value="Andjfewef"
+                          defaultValue={manager.info}
                           className="input"
                           type="text"
-                          name="Manager"
+                          name="manager"
                           placeholder="Enter Manager"
                           required
                         />
                       </div>
                       <div className="wrap-input">
                         <input
+                          defaultValue={employee.fav_color}
                           className="input"
                           type="text"
                           name="favColor"
@@ -163,6 +246,23 @@ function Edit(props) {
                           required
                         />
                       </div>
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyItems: 'center',
+                        }}
+                      >
+                        <p style={{ fontSize: '20px', marginRight: '20px' }}>
+                          terminate
+                        </p>
+                        <input
+                          ref={checkBoxInfo}
+                          onChange={() => handleCheckBox()}
+                          checked={employee.terminated === checkbox}
+                          type="checkbox"
+                        />
+                      </span>
                       <div className="container-register-form-btn">
                         <button type="submit" className="register-form-btn">
                           Submite

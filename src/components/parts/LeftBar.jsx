@@ -7,30 +7,6 @@ function LeftBar(props) {
   const svg2 = useRef();
   const status = useRef();
 
-  //   useEffect(() => {
-  //     fetch(
-  //       `https://financialmodelingprep.com/api/v3/is-the-market-open?apikey=${process.env.REACT_APP_API_KEY_1}`
-  //     )
-  //       .then((res) => res.json())
-  //       .then((result) => {
-  //         if (result.isTheStockMarketOpen) {
-  //           status.current.style.color = '#5efad7';
-  //         } else {
-  //           status.current.style.color = '#eb5887';
-  //         }
-  //         status.current.innerHTML = result.isTheStockMarketOpen
-  //           ? 'Martket Status: Open'
-  //           : 'Market Status: Close';
-  //       })
-  //       .catch((error) => console.log(error));
-  //     let section = window.location.href.split('/');
-  //     if (section) {
-  //       svg1.current.style.fill = '#5eb5f8';
-  //     } else {
-  //       svg2.current.style.fill = '#5eb5f8';
-  //     }
-  //   }, []);
-
   return (
     <aside className="leftbar">
       <img className="leftbar__logo" src={Logo} alt="not find" />

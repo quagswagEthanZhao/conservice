@@ -28,18 +28,19 @@
         width: 100%
         border: none
         outline: none;
+        display : relative
     &__results
         transition: all .4s
         position: absolute
         left: 0
         width: 100%
+        background-color: #edebf8
         flex-direction: column
-        background-color: $panel-color
         z-index: -1
         padding: 0
         top: 0
-        border: 15px solid $panel-color
-        border-top: 40px solid $panel-color
+        border: 15px solid #edebf8
+        border-top: 40px solid transparent
         border-radius: 5px 
         border-bottom-left-radius: 20px
         border-bottom-right-radius: 20px
@@ -53,7 +54,7 @@
             transition: all .4s
 
             a
-                color: white
+                color: black
                 width: 100%
             h4,h6
                 margin: 5px 0
@@ -61,8 +62,8 @@
                 color: $inactive-color
                 text-align: left
             &:hover
-                color: $main-color
-                background-color: $elements-color
+                color: #edebf8
+                background-color: white 
                 cursor: pointer
 
     &__add

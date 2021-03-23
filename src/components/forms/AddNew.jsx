@@ -1,9 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LeftBar from '../parts/LeftBar';
 import Logo from '../../images/account3.png';
 
 function AddNew(props) {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const {
+      name,
+      address,
+      email,
+      phoneNumber,
+      position,
+      department,
+      startingDate,
+      endDate,
+      shift,
+      manager,
+      favColor,
+    } = event.target;
+    fetch('http://localhost:3000/api/addNew', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        name: name.value,
+        address: address.value,
+        email: email.value,
+        phoneNumber: phoneNumber.value,
+        position: position.value,
+        department: department.value,
+        startingDate: startingDate.value,
+        shift: shift.value,
+        manager: manager.value ? manager.value : null,
+        favColor: favColor.value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setMessage(data.message))
+      .catch((error) => console.log(error.message));
+  };
   return (
     <section className="Dashboard" id="dashboard">
       <div
@@ -30,11 +69,15 @@ function AddNew(props) {
                         alt="Login Img"
                       />
                     </div>
-                    <form className="register-form validate-form">
+                    <form
+                      onSubmit={(event) => handleSubmit(event)}
+                      action="post"
+                      className="register-form validate-form"
+                    >
                       <span className="register-form-title">
-                        Edit Information
+                        Add New Information
                       </span>
-                      {errorMessage === '' ? <div /> : <h3>{errorMessage}</h3>}
+                      <p style={{ fontSize: '15px' }}>{message}</p>
                       <div className="wrap-input">
                         <input
                           className="input"
@@ -101,27 +144,7 @@ function AddNew(props) {
                           required
                         />
                       </div>
-                      <div
-                        className="wrap-input"
-                        data-validate="Password is required"
-                      >
-                        <input
-                          className="input"
-                          type="text"
-                          name="endDate"
-                          placeholder="Enter End Date"
-                          required
-                        />
-                      </div>
-                      <div className="wrap-input">
-                        <input
-                          className="input"
-                          type="text"
-                          name="employmentStatu"
-                          placeholder="Enter Statu"
-                          required
-                        />
-                      </div>
+
                       <div className="wrap-input">
                         <input
                           va
@@ -136,9 +159,8 @@ function AddNew(props) {
                         <input
                           className="input"
                           type="text"
-                          name="Manager"
+                          name="manager"
                           placeholder="Enter Manager"
-                          required
                         />
                       </div>
                       <div className="wrap-input">

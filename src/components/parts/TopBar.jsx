@@ -1,57 +1,59 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { Link } from 'react-router-dom';
 
 function TopBarTest(props) {
+  const [employees, setEmployees] = useState([]);
   const searchBar = useRef();
   const searchResoult = useRef();
   const searchText = useRef();
 
   useEffect(() => {
-    console.log(props.location);
-  });
+    fetch('http://localhost:3000/api/getAll')
+      .then((res) => res.json())
+      .then((employees) => {
+        setEmployees(employees);
+      });
+  }, []);
 
-  //   useEffect(() => {
-  //     fetch(
-  //       `https://cloud.iexapis.com/stable/ref-data/symbols?token=${process.env.REACT_APP_API_KEY_2}`
-  //     )
-  //       .then((res) => res.json())
-  //       .then((resoult) => (allTicket = resoult))
-  //       .catch((error) => console.log(error.message));
-  //   }, []);
-
-  //   const handleSearchStock = (event) => {
-  //     let userInput = searchText.current.value;
-  //     if (userInput.length === 0) {
-  //       searchResoult.current.style.display = 'none';
-  //       searchResoult.current.innerHTML = '';
-  //     }
-  //     searchResoult.current.innerHTML = '';
-  //     const filtered = [];
-  //     let round = 0;
-  //     for (var i = 0; i < allTicket.length; i++) {
-  //       let currentTicket = allTicket[i].symbol;
-  //       let filter = searchText.current.value.toUpperCase();
-  //       if (round === 10) {
-  //         break;
-  //       }
-  //       if (currentTicket.indexOf(filter) > -1) {
-  //         if (filtered.length > 10) {
-  //           filtered = [];
-  //         }
-  //         filtered.push([currentTicket, allTicket[i].name]);
-  //         round++;
-  //       }
-  //     }
-  //     if (filtered.length > 0 && userInput.length > 0) {
-  //       searchResoult.current.style.display = 'flex';
-  //       for (var j = 0; j < filtered.length; j++) {
-  //         let newChild = document.createElement('li');
-  //         newChild.innerHTML = `<a href=''><h4>${filtered[j][0]}</h4><h6>${filtered[j][1]}</h6></a>`;
-  //         searchResoult.current.appendChild(newChild);
-  //       }
-  //     }
-  //   };
+  const handleSearchEmployee = () => {
+    let userInput = searchText.current.value;
+    if (userInput.length === 0) {
+      searchResoult.current.style.display = 'none';
+      searchResoult.current.innerHTML = '';
+    }
+    searchResoult.current.innerHTML = '';
+    const filtered = [];
+    let round = 0;
+    for (var i = 0; i < employees.length; i++) {
+      let currentEmployee = employees[i].name;
+      let currentEmployeeDepartment = employees[i].department_name;
+      let currentEmployeeId = employees[i].em_id;
+      let filter = searchText.current.value;
+      if (round === 5) {
+        break;
+      }
+      if (currentEmployee.toUpperCase().indexOf(filter.toUpperCase()) > -1) {
+        if (filtered.length > 5) {
+          filtered = [];
+        }
+        filtered.push([
+          currentEmployee,
+          currentEmployeeDepartment,
+          currentEmployeeId,
+        ]);
+        round++;
+      }
+    }
+    if (filtered.length > 0 && userInput.length > 0) {
+      searchResoult.current.style.display = 'flex';
+      for (var j = 0; j < filtered.length; j++) {
+        let newChild = document.createElement('li');
+        newChild.innerHTML = `<a href="/edit/${filtered[j][2]}"><h4>${filtered[j][0]}</h4><h6>${filtered[j][1]}</h6></a>`;
+        searchResoult.current.appendChild(newChild);
+      }
+    }
+  };
 
   return (
     <nav style={{ display: 'flex', alignItems: 'center' }}>
@@ -97,8 +99,8 @@ function TopBarTest(props) {
               }}
               onBlur={() => {
                 searchBar.current.style.boxShadow = 'none';
-                searchResoult.current.style.display = 'none';
               }}
+              onKeyUp={() => handleSearchEmployee()}
               autoComplete="off"
             />
           </div>

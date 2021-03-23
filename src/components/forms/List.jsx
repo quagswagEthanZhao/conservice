@@ -4,180 +4,17 @@ import EditIcon from '@material-ui/icons/Edit';
 import ReactPaginate from 'react-paginate';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import SortIcon from '@material-ui/icons/Sort';
 import { Link } from 'react-router-dom';
 import './List.css';
 import { Fragment } from 'react';
 import test from '../../images/logo.jpg';
 
-/*
- <th>Phone Number</th>
-          <th>Position</th>
-          <th>Department</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Employment Status</th>
-          <th>Shift</th>
-          <th>Manager</th>
-          <th>Photo</th>
-          <th>Color</th>
-*/
-
-const fakeData = [
-  {
-    id: 1,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 2,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 3,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 4,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 5,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 6,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 7,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 8,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 9,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 10,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 11,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 12,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 13,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 14,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 15,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 16,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 17,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 18,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 19,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 20,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 21,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 22,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 23,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 24,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-  {
-    id: 25,
-    name: 'Ethan',
-    department: 'IT',
-    startingDate: '2021-5-10',
-  },
-];
-
 function List(props) {
   const [members, setMembers] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [sortColum, setSortColum] = useState('');
+  const [checkbox, setCheckBox] = useState(true);
   const membersPerPage = 15;
   const pagesVisited = pageNumber * membersPerPage;
   const displayMembers = members.slice(
@@ -186,14 +23,35 @@ function List(props) {
   );
   const pageCount = Math.ceil(members.length / membersPerPage);
   const editButton = useRef();
-
   useEffect(() => {
-    setMembers(fakeData);
+    fetch('http://localhost:3000/api/getAll')
+      .then((res) => res.json())
+      .then((resoult) => {
+        setMembers(resoult);
+      });
   }, []);
 
+  const handleCheckBox = (event, id) => {
+    checkbox ? setCheckBox(false) : setCheckBox(true);
+  };
+
+  const handleSort = (arr) => {
+    const sortedEmployees = [...arr];
+    if (sortedEmployees !== null) {
+      sortedEmployees.sort((a, b) => (a[sortColum] > b[sortColum] ? 1 : -1));
+    }
+    return sortedEmployees;
+  };
+
   const handleClick = (member) => {
-    const filtered = members.filter((m) => m.id !== member.id);
+    const filtered = members.filter((m) => m.em_id !== member.em_id);
     setMembers(filtered);
+    fetch(`http://localhost:3000/delete/${member.em_id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
   };
 
   const handleChangePage = ({ selected }) => {
@@ -209,31 +67,29 @@ function List(props) {
   return (
     <Fragment>
       <p style={{ color: 'black', fontSize: 'Large' }}>
-        Showing {members.length} employee record in database
+        Showing {members.length} employees record in database
       </p>
       <table className="table table-striped table-hover">
         <thead className="thead-dark">
           <tr>
-            <th>Id</th>
+            <th onClick={() => setSortColum('em_id')}>Id</th>
             <th>Photo</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Position</th>
-            <th>Department</th>
-            <th>Start Date</th>
-            <th>Employment Status</th>
-            <th>Shift</th>
-            <th>Manager</th>
-            <th>Color</th>
+            <th onClick={() => setSortColum('name')}>Name</th>
+            <th onClick={() => setSortColum('address')}>Address</th>
+            <th onClick={() => setSortColum('email')}>Email</th>
+            <th onClick={() => setSortColum('phone')}>Phone Number</th>
+            <th onClick={() => setSortColum('job')}>Position</th>
+            <th onClick={() => setSortColum('department_name')}>Department</th>
+            <th onClick={() => setSortColum('start_date')}>Start Date</th>
+            <th onClick={() => setSortColum('shift')}>Shift</th>
+            <th onClick={() => setSortColum('fav_color')}>Color</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {displayMembers.map((m) => (
-            <tr key={m.id}>
-              <td>{m.id}</td>
+          {handleSort(displayMembers).map((m) => (
+            <tr key={m.em_id}>
+              <td>{m.em_id}</td>
               <td>
                 <img
                   style={{ height: 50, width: 50, borderRadius: '35px' }}
@@ -242,18 +98,16 @@ function List(props) {
                 />
               </td>
               <td>{m.name}</td>
-              <td>{m.department}</td>
-              <td>{m.startingDate}</td>
-              <td>53535652356253</td>
-              <td>Hejisjlfs</td>
-              <td>conser</td>
-              <td>3023933293923</td>
-              <td>Status</td>
-              <td>303-3939933</td>
-              <td>Hfjiefsl</td>
-              <td>red</td>
+              <td>{m.address}</td>
+              <td>{m.email}</td>
+              <td>{m.phone}</td>
+              <td>{m.job_title}</td>
+              <td>{m.department_name}</td>
+              <td>{m.start_date}</td>
+              <td>{m.shift}</td>
+              <td>{m.fav_color}</td>
               <td>
-                <Link to={`/edit/${m.id}`}>
+                <Link to={`/edit/${m.em_id}`}>
                   <EditIcon
                     id={editButton}
                     className="editIcon"
