@@ -49,7 +49,6 @@ function ReportDash(props) {
         setNotify_1(section_1);
         setNotify_2(section_2);
         setNotify_3(section_3);
-        console.log(notify_1);
       })
       .catch((error) => console.log(error.message));
   }, []);
@@ -126,7 +125,7 @@ function ReportDash(props) {
                   </div>
                 </div>
                 <div className="panel__topCharts">
-                  <a href="" className="chartLink" id="chartFirst">
+                  <a href="www.goe.com" className="chartLink" id="chartFirst">
                     <div className="emChart">
                       <div className="emChart__chart">
                         <Chart dataArray={fakeHiringData} />
@@ -137,7 +136,7 @@ function ReportDash(props) {
                       </div>
                     </div>
                   </a>
-                  <a href="" className="chartLink" id="chartFirst">
+                  <a href="www.gog" className="chartLink" id="chartFirst">
                     <div className="emChart">
                       <div className="emChart__chart">
                         <Chart dataArray={faketerminateData} />

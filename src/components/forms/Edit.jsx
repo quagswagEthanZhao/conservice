@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import TopBar from '../parts/TopBar';
+import axios from 'axios';
 import LeftBar from '../parts/LeftBar';
 import test from '../../images/account3.png';
 function Edit(props) {
@@ -8,6 +8,8 @@ function Edit(props) {
   const [Message, setMessage] = useState('');
   const [checkbox, setCheckBox] = useState(true);
   const [checkResoult, setCheckResoult] = useState(null);
+  const [file, setFile] = useState('');
+  const [fileName, setFileName] = useState('Choose file.');
   const checkBoxInfo = useRef();
   const id = props.location.pathname.split('/')[2];
 
@@ -15,7 +17,7 @@ function Edit(props) {
     fetch('http://localhost:3000/api/getAll')
       .then((res) => res.json())
       .then((response) => {
-        const em_info = response.filter((m) => m.em_id == id)[0];
+        const em_info = response.filter((m) => m.em_id === Number(id))[0];
         setEmployee(em_info);
       })
       .catch((error) => error.message);
@@ -23,7 +25,12 @@ function Edit(props) {
       .then((res) => res.json())
       .then((response) => setManager(response))
       .catch((error) => console.log(error.message));
-  }, []);
+  }, [id]);
+
+  const handleImageOnChange = (event) => {
+    setFile(event.target.files[0]);
+    setFileName(event.target.files[0].name);
+  };
 
   const handleCheckBox = () => {
     checkbox ? setCheckBox(false) : setCheckBox(true);
@@ -31,7 +38,8 @@ function Edit(props) {
     setCheckResoult(terminated);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    console.log(fileName);
     event.preventDefault();
     const {
       name,
@@ -46,7 +54,26 @@ function Edit(props) {
       manager,
       favColor,
     } = event.target;
+    //console.log(event.target.pic.files[0]);
+    //Hadnle File Upload
+    const formFileData = new FormData();
+    formFileData.append('file', file);
+    try {
+      const res = await axios.post(
+        'http://localhost:3000/api/fileUpload',
+        formFileData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error.message);
+    }
 
+    //Handle Form Info Upload
     fetch(`http://localhost:3000/api/updateInfo/${id}`, {
       method: 'put',
       headers: {
@@ -96,7 +123,6 @@ function Edit(props) {
         <div style={{ display: 'flex', height: '100%', overflowY: 'scroll' }}>
           <LeftBar />
           <div className="panel">
-            <TopBar />
             <div className="panel__container">
               <section className="limiter">
                 <div className="constainer-register">
@@ -263,6 +289,14 @@ function Edit(props) {
                           type="checkbox"
                         />
                       </span>
+
+                      <input
+                        id="pic_upload"
+                        type="file"
+                        name="pic"
+                        onchange={(event) => handleImageOnChange(event)}
+                      />
+
                       <div className="container-register-form-btn">
                         <button type="submit" className="register-form-btn">
                           Submite

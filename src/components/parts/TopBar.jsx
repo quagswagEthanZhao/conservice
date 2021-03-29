@@ -23,7 +23,7 @@ function TopBarTest(props) {
       searchResoult.current.innerHTML = '';
     }
     searchResoult.current.innerHTML = '';
-    const filtered = [];
+    let filtered = [];
     let round = 0;
     for (var i = 0; i < employees.length; i++) {
       let currentEmployee = employees[i].name;

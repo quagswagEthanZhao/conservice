@@ -4,7 +4,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ReactPaginate from 'react-paginate';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import SortIcon from '@material-ui/icons/Sort';
+
 import { Link } from 'react-router-dom';
 import './List.css';
 import { Fragment } from 'react';
@@ -14,10 +14,16 @@ function List(props) {
   const [members, setMembers] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [sortColum, setSortColum] = useState('');
-  const [checkbox, setCheckBox] = useState(true);
   const membersPerPage = 15;
   const pagesVisited = pageNumber * membersPerPage;
-  const displayMembers = members.slice(
+  const handleSort = (arr) => {
+    const sortedEmployees = [...arr];
+    if (sortedEmployees !== null) {
+      sortedEmployees.sort((a, b) => (a[sortColum] > b[sortColum] ? 1 : -1));
+    }
+    return sortedEmployees;
+  };
+  const displayMembers = handleSort(members).slice(
     pagesVisited,
     pagesVisited + membersPerPage
   );
@@ -30,18 +36,6 @@ function List(props) {
         setMembers(resoult);
       });
   }, []);
-
-  const handleCheckBox = (event, id) => {
-    checkbox ? setCheckBox(false) : setCheckBox(true);
-  };
-
-  const handleSort = (arr) => {
-    const sortedEmployees = [...arr];
-    if (sortedEmployees !== null) {
-      sortedEmployees.sort((a, b) => (a[sortColum] > b[sortColum] ? 1 : -1));
-    }
-    return sortedEmployees;
-  };
 
   const handleClick = (member) => {
     const filtered = members.filter((m) => m.em_id !== member.em_id);
@@ -87,7 +81,7 @@ function List(props) {
           </tr>
         </thead>
         <tbody>
-          {handleSort(displayMembers).map((m) => (
+          {displayMembers.map((m) => (
             <tr key={m.em_id}>
               <td>{m.em_id}</td>
               <td>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import LeftBar from '../parts/LeftBar';
 import Logo from '../../images/account3.png';
 
@@ -15,7 +15,6 @@ function AddNew(props) {
       position,
       department,
       startingDate,
-      endDate,
       shift,
       manager,
       favColor,

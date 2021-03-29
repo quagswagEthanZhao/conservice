@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LeftBar from '../parts/LeftBar';
-import TopBar from '../parts/TopBar';
+
 import Logo from '../../images/account3.png';
 
 function AddDepartment(props) {
@@ -41,8 +41,7 @@ function AddDepartment(props) {
             style={{
               display: 'flex',
               height: '100%',
-              overflowY: 'scroll',
-              overflowY: 'hidden',
+              overflowY: 'hiden',
             }}
           >
             <LeftBar />
