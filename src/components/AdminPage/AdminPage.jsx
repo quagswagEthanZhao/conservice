@@ -2,7 +2,7 @@ import React from 'react';
 import LeftBar from '../parts/LeftBar';
 import TopBar from '../parts/TopBar';
 import List from '../forms/ListAdmin';
-
+//Admin
 function AdminPage(props) {
   return (
     <section className="Dashboard" id="dashboard">
